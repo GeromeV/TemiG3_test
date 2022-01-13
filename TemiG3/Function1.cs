@@ -344,7 +344,7 @@ namespace TemiG3
         //log in
         [FunctionName("GetUsersByEmailAndPassword")]
         public static async Task<IActionResult> GetUsers(
-           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetUsersByEmailAndPassword/{email}/{id}")] HttpRequest req,string email, string password,
+           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetUsersByEmailAndPassword/{email}/{password}")] HttpRequest req,string email, string password,
            ILogger log)
         {
             CosmosClientOptions options = new CosmosClientOptions();
