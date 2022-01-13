@@ -141,9 +141,42 @@ namespace TemiG3
 
         }
 
+        [FunctionName("GetReservationById")]
+        public static async Task<IActionResult> GetReservationById(
+           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetReservationByName/{id}")] HttpRequest req,
+           ILogger log, string id)
+        {
+            CosmosClientOptions options = new CosmosClientOptions();
+            options.ConnectionMode = ConnectionMode.Gateway;
 
-        [FunctionName("DeleteReservation")]
-        public static async Task<IActionResult> DeleteReservation(
+            //connect to database
+            CosmosClient client = new CosmosClient(Environment.GetEnvironmentVariable("cosmos"), options);
+            //get container
+            Container container = client.GetContainer("TemiG3", "reservations");
+
+            //Creating query
+            QueryDefinition query = new QueryDefinition("SELECT * FROM reservations r where r.id = @id").WithParameter("@id", id);
+
+            //Creating list to put items in that will be returned
+            List<Reservation> items = new List<Reservation>();
+            using (FeedIterator<Reservation> resultSet = container.GetItemQueryIterator<Reservation>(
+                queryDefinition: query))
+            {
+                while (resultSet.HasMoreResults)
+                {
+                    //Get the items and put them in the list
+                    FeedResponse<Reservation> response = await resultSet.ReadNextAsync();
+                    items.AddRange(response);
+                }
+            }
+            //return the list
+            return new OkObjectResult(items);
+
+        }
+
+
+        [FunctionName("DeleteReservationByName")]
+        public static async Task<IActionResult> DeleteReservationByName(
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "DeleteReservation/{name}")] HttpRequest req,
             ILogger log,string name)
         {
@@ -180,9 +213,48 @@ namespace TemiG3
 
         }
 
-        
-        [FunctionName("UpdateReservation")]
-        public static async Task<IActionResult> QueryItemsCosmosStop(
+
+        [FunctionName("DeleteReservationById")]
+        public static async Task<IActionResult> DeleteReservationById(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "DeleteReservation/{id}")] HttpRequest req,
+            ILogger log, string id)
+        {
+            CosmosClientOptions options = new CosmosClientOptions();
+            options.ConnectionMode = ConnectionMode.Gateway;
+
+            //connect to database
+            CosmosClient client = new CosmosClient(Environment.GetEnvironmentVariable("cosmos"), options);
+            //get container
+            Container container = client.GetContainer("TemiG3", "reservations");
+
+            //Creating query
+            QueryDefinition query = new QueryDefinition("SELECT * FROM reservations r where r.id = @id").WithParameter("@id", id);
+
+            //Creating list to put items in that will be returned
+            List<Reservation> items = new List<Reservation>();
+            using (FeedIterator<Reservation> resultSet = container.GetItemQueryIterator<Reservation>(
+                queryDefinition: query))
+            {
+                while (resultSet.HasMoreResults)
+                {
+                    //Get the items and put them in the list
+                    FeedResponse<Reservation> response = await resultSet.ReadNextAsync();
+                    items.AddRange(response);
+
+                }
+            }
+            foreach (var item in items)
+            {
+                await container.DeleteItemAsync<Reservation>(item.Id, new PartitionKey(item.ReservationId));
+            }
+            //return the list
+            return new OkObjectResult(items);
+
+        }
+
+
+        [FunctionName("UpdateReservationByName")]
+        public static async Task<IActionResult> UpdateReservationByName(
            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "UpdateReservation/{name}")] HttpRequest req, string name,
            ILogger log)
         {
@@ -223,6 +295,52 @@ namespace TemiG3
             //return the list
             return new OkObjectResult(items);
         }
+
+
+        [FunctionName("UpdateReservationById")]
+        public static async Task<IActionResult> UpdateReservationById(
+          [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "UpdateReservation/{id}")] HttpRequest req, string id,
+          ILogger log)
+        {
+            string json = await new StreamReader(req.Body).ReadToEndAsync();
+
+            //Cast json to the required object
+            Reservation request = JsonConvert.DeserializeObject<Reservation>(json);
+            CosmosClientOptions options = new CosmosClientOptions();
+            options.ConnectionMode = ConnectionMode.Gateway;
+
+            //connect to database
+            CosmosClient client = new CosmosClient(Environment.GetEnvironmentVariable("cosmos"), options);
+            //get container
+            Container container = client.GetContainer("TemiG3", "reservations");
+
+            //Creating query
+            QueryDefinition query = new QueryDefinition("SELECT * FROM reservations r where r.id = @id").WithParameter("@id", id);
+
+            //Creating list to put items in that will be returned
+            Reservation items = null;
+            using (FeedIterator<Reservation> resultSet = container.GetItemQueryIterator<Reservation>(queryDefinition: query))
+            {
+                while (resultSet.HasMoreResults)
+                {
+                    //Get the items and put them in the list
+                    FeedResponse<Reservation> response = await resultSet.ReadNextAsync();
+                    foreach (var ev in response)
+                    {
+                        items = ev;
+                        break;
+                    }
+
+                }
+            }
+            items.ArrivalTime = request.ArrivalTime;
+            await container.ReplaceItemAsync<Reservation>(items, items.Id.ToString());
+
+            //return the list
+            return new OkObjectResult(items);
+        }
+
+
         //log in
         [FunctionName("GetUsers")]
         public static async Task<IActionResult> GetUsers(
