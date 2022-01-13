@@ -56,7 +56,7 @@ namespace TemiG3
             string json = await new StreamReader(req.Body).ReadToEndAsync();
 
             //Cast json to the required object
-            Reservation request = JsonConvert.DeserializeObject<Reservation>(json);
+            var request = JsonConvert.DeserializeObject<Reservation>(json);
             //MANDATORY property has to be created called id
             request.Id = Guid.NewGuid().ToString();
             request.ReservationId = Guid.NewGuid().ToString();
@@ -333,7 +333,7 @@ namespace TemiG3
 
                 }
             }
-            items.ArrivalTime = request.ArrivalTime;
+            items.Id = request.Id;
             await container.ReplaceItemAsync<Reservation>(items, items.Id.ToString());
 
             //return the list
