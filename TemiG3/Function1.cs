@@ -353,20 +353,20 @@ namespace TemiG3
             //connect to database
             CosmosClient client = new CosmosClient(Environment.GetEnvironmentVariable("cosmos"), options);
             //get container
-            Container container = client.GetContainer("TemiG3", "users");
+            Container container = client.GetContainer("TemiG3", "Users");
 
             //Creating query
             QueryDefinition query = new QueryDefinition("select * from reservations");
 
             //Creating list to put items in that will be returned
-            List<Reservation> items = new List<Reservation>();
-            using (FeedIterator<Reservation> resultSet = container.GetItemQueryIterator<Reservation>(
+            List<Users> items = new List<Users>();
+            using (FeedIterator<Users> resultSet = container.GetItemQueryIterator<Users>(
                 queryDefinition: query))
             {
                 while (resultSet.HasMoreResults)
                 {
                     //Get the items and put them in the list
-                    FeedResponse<Reservation> response = await resultSet.ReadNextAsync();
+                    FeedResponse<Users> response = await resultSet.ReadNextAsync();
                     items.AddRange(response);
                 }
             }
@@ -386,14 +386,14 @@ namespace TemiG3
             Users request = JsonConvert.DeserializeObject<Users>(json);
             //MANDATORY property has to be created called id
             request.Id = Guid.NewGuid().ToString();
-            
+            request.UserId = Guid.NewGuid().ToString();
             //Create Cosmos client
             CosmosClientOptions options = new CosmosClientOptions();
             options.ConnectionMode = ConnectionMode.Gateway;
             //connect to database
             CosmosClient client = new CosmosClient(Environment.GetEnvironmentVariable("cosmos"), options);
             //get container in a database
-            Container container = client.GetContainer("TemiG3", "reservations");
+            Container container = client.GetContainer("TemiG3", "Users");
             //Get the response
             ItemResponse<Users> response = await container.CreateItemAsync(request, new PartitionKey(request.UserId));
 

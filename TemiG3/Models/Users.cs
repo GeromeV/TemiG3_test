@@ -14,9 +14,9 @@ namespace TemiG3.Models
 
         [JsonProperty("userid")]
         public string UserId { get; set; }
-        [JsonProperty("name")]
-        public string Name { get; set; }
-        [JsonProperty("wachtwoord")]
-        public string Wachtwoord { get; set; }
+        [JsonProperty("email")]
+        public string email { get; set; }
+        [JsonProperty("password")]
+        public string Password { get; set; }
     }
 }
