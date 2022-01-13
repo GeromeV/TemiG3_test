@@ -11,8 +11,8 @@ namespace TemiG3.Models
     {
         [JsonProperty("id")]
         public string Id { get; set; }
-        [JsonProperty("userid")]
 
+        [JsonProperty("userid")]
         public string UserId { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; }

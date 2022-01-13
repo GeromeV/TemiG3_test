@@ -256,6 +256,32 @@ namespace TemiG3
             return new OkObjectResult(items);
 
         }
+
+        [FunctionName("AddUsers")]
+        public static async Task<IActionResult> AddUsers(
+           [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
+           ILogger log)
+        {
+            string json = await new StreamReader(req.Body).ReadToEndAsync();
+
+            //Cast json to the required object
+            Users request = JsonConvert.DeserializeObject<Users>(json);
+            //MANDATORY property has to be created called id
+            request.Id = Guid.NewGuid().ToString();
+            
+            //Create Cosmos client
+            CosmosClientOptions options = new CosmosClientOptions();
+            options.ConnectionMode = ConnectionMode.Gateway;
+            //connect to database
+            CosmosClient client = new CosmosClient(Environment.GetEnvironmentVariable("cosmos"), options);
+            //get container in a database
+            Container container = client.GetContainer("TemiG3", "reservations");
+            //Get the response
+            ItemResponse<Users> response = await container.CreateItemAsync(request, new PartitionKey(request.UserId));
+
+            return new OkObjectResult(response);
+
+        }
     }
 
 }
