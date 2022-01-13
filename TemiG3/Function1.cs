@@ -342,9 +342,9 @@ namespace TemiG3
 
 
         //log in
-        [FunctionName("GetUsers")]
+        [FunctionName("GetUsersByEmailAndPassword")]
         public static async Task<IActionResult> GetUsers(
-           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
+           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetUsersByEmailAndPassword/{email}/{id}")] HttpRequest req,string email, string password,
            ILogger log)
         {
             CosmosClientOptions options = new CosmosClientOptions();
@@ -356,7 +356,7 @@ namespace TemiG3
             Container container = client.GetContainer("TemiG3", "Users");
 
             //Creating query
-            QueryDefinition query = new QueryDefinition("select * from reservations");
+            QueryDefinition query = new QueryDefinition("SELECT * FROM Users u where u.email = @email and u.password = @password ").WithParameter("@email", email).WithParameter("@password",password);
 
             //Creating list to put items in that will be returned
             List<Users> items = new List<Users>();
