@@ -333,7 +333,7 @@ namespace TemiG3
 
                 }
             }
-            items.Id = request.Id;
+            items = request;
             await container.ReplaceItemAsync<Reservation>(items, items.Id.ToString());
 
             //return the list
