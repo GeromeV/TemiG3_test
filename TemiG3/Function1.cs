@@ -186,7 +186,10 @@ namespace TemiG3
            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "UpdateReservation/{name}")] HttpRequest req, string name,
            ILogger log)
         {
+            string json = await new StreamReader(req.Body).ReadToEndAsync();
 
+            //Cast json to the required object
+            Reservation request = JsonConvert.DeserializeObject<Reservation>(json);
             CosmosClientOptions options = new CosmosClientOptions();
             options.ConnectionMode = ConnectionMode.Gateway;
 
@@ -214,6 +217,7 @@ namespace TemiG3
 
                 }
             }
+            items.ArrivalTime = request.ArrivalTime;
             await container.ReplaceItemAsync<Reservation>(items, items.Id.ToString());
 
             //return the list
