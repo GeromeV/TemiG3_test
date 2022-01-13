@@ -290,6 +290,12 @@ namespace TemiG3
                 }
             }
             items.ArrivalTime = request.ArrivalTime;
+            items.ArrivalDate = request.ArrivalDate;
+            items.BirthDate = request.BirthDate;
+            items.Duration = request.Duration;
+            items.FirstName = request.FirstName;
+            items.LastName = request.LastName;
+            items.GroupSize = request.GroupSize;
             await container.ReplaceItemAsync<Reservation>(items, items.Id.ToString());
 
             //return the list
@@ -333,7 +339,15 @@ namespace TemiG3
 
                 }
             }
-            items = request;
+            items.ArrivalTime = request.ArrivalTime;
+            items.ArrivalDate = request.ArrivalDate;
+            items.BirthDate = request.BirthDate;
+            items.Duration = request.Duration;
+            items.FirstName = request.FirstName;
+            items.LastName = request.LastName;
+            items.GroupSize = request.GroupSize;
+
+
             await container.ReplaceItemAsync<Reservation>(items, items.Id.ToString());
 
             //return the list
