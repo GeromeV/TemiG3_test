@@ -110,7 +110,7 @@ namespace TemiG3
 
         [FunctionName("GetReservationByDate")]
         public static async Task<IActionResult> GetReservationByDate(
-           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetReservationByName/{date}")] HttpRequest req,
+           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetReservationByDate/{date}")] HttpRequest req,
            ILogger log, string date)
         {
             CosmosClientOptions options = new CosmosClientOptions();
@@ -143,7 +143,7 @@ namespace TemiG3
 
         [FunctionName("GetReservationById")]
         public static async Task<IActionResult> GetReservationById(
-           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetReservationByName/{id}")] HttpRequest req,
+           [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetReservationById/{id}")] HttpRequest req,
            ILogger log, string id)
         {
             CosmosClientOptions options = new CosmosClientOptions();
@@ -177,7 +177,7 @@ namespace TemiG3
 
         [FunctionName("DeleteReservationByName")]
         public static async Task<IActionResult> DeleteReservationByName(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "DeleteReservation/{name}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "DeleteReservationByName/{name}")] HttpRequest req,
             ILogger log,string name)
         {
             CosmosClientOptions options = new CosmosClientOptions();
@@ -216,7 +216,7 @@ namespace TemiG3
 
         [FunctionName("DeleteReservationById")]
         public static async Task<IActionResult> DeleteReservationById(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "DeleteReservation/{id}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "DeleteReservationById/{id}")] HttpRequest req,
             ILogger log, string id)
         {
             CosmosClientOptions options = new CosmosClientOptions();
@@ -255,7 +255,7 @@ namespace TemiG3
 
         [FunctionName("UpdateReservationByName")]
         public static async Task<IActionResult> UpdateReservationByName(
-           [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "UpdateReservation/{name}")] HttpRequest req, string name,
+           [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "UpdateReservationByName/{name}")] HttpRequest req, string name,
            ILogger log)
         {
             string json = await new StreamReader(req.Body).ReadToEndAsync();
@@ -299,7 +299,7 @@ namespace TemiG3
 
         [FunctionName("UpdateReservationById")]
         public static async Task<IActionResult> UpdateReservationById(
-          [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "UpdateReservation/{id}")] HttpRequest req, string id,
+          [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "UpdateReservationById/{id}")] HttpRequest req, string id,
           ILogger log)
         {
             string json = await new StreamReader(req.Body).ReadToEndAsync();
